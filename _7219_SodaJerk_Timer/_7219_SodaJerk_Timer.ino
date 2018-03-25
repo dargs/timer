@@ -1,21 +1,25 @@
-
-// Countdown clock to sync with artwork playing off brightsign player. To let visitors know when the artwork is due to start again. 
-// On power up, timer=0
-// loop counts down
-// when digital input 2 = HIGH then clock = 1 hour.. 
-// 
-
-//https://playground.arduino.cc/Main/LedControl 
-#include "LedControl.h"
-
 /* 
- * Now we create a new LedControl. 
+ dargs 20180325
+
+ Countdown clock to sync with artwork playing off brightsign player. To let visitors know when the artwork is due to start again. 
+ On power up, timer=0
+ loop counts down
+ when digital input 2 = HIGH then clock = 1 hour.. 
+ 
+ thanks to the post  http://forum.arduino.cc/index.php?topic=262478.0 
+ @BulldogLowell @gvictor00 @robtillaart @Delta_G
+ for the timer code !
+
+ * https://playground.arduino.cc/Main/LedControl 
  * We use pins 12,11 and 10 on the Arduino for the SPI interface
  * Pin 12 is connected to the DATA IN-pin of the first MAX7221
  * Pin 11 is connected to the CLK-pin of the first MAX7221
  * Pin 10 is connected to the LOAD(/CS)-pin of the first MAX7221 	
  * There will only be a single MAX7221 attached to the arduino 
  */
+
+
+#include "LedControl.h"
 LedControl lc=LedControl(12,11,10,1); 
 
 unsigned long startTime;
@@ -28,7 +32,6 @@ int starttime = 0;
 int triggerPin = 2;
 int triggerState = 0;
 int m1, m2,s1, s2; // the indivdual digit value for 4 digits
-int go =0;
 
 void setup() 
 {
@@ -41,6 +44,7 @@ void setup()
   lc.setIntensity(0,15);
   
   pinMode(triggerPin, INPUT); // install 10k pull-up resistor so by default input is HIGH, until grounded then becomes LOW to reset.
+
 }
 
 void loop()  // Clock is always counting down.. if Pin 2 is LOW, then clock resets to 1 hour.
@@ -49,12 +53,8 @@ void loop()  // Clock is always counting down.. if Pin 2 is LOW, then clock rese
 
   if (triggerState == LOW) {   
     sec = 3600; 
-    go=1;
   } 
   
-/*  
-  if (status = 1)
-  { */
    if (millis() - startTime >= 1000)
     {
       sec--;
@@ -64,19 +64,11 @@ void loop()  // Clock is always counting down.. if Pin 2 is LOW, then clock rese
       displayTime(displaySec,displayMin);
       printNumber(displaySec,displayMin);
     }
-    
-/*   if (status = 0)
-   {
-      printNumber(0,0);
-   }
-*/  
 }
 
 void displayTime(int seconds, int minutes)
 {
-
   if (seconds<0) Serial.print("negative");
-  
   Serial.print(" Minutes: ");
   Serial.print(minutes);
   Serial.print(" Seconds: ");
